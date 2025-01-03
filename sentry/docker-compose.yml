@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: sentry-pg
+    environment:
+      - POSTGRES_USER=${SENTRY_DB_USER}
+      - POSTGRES_PASSWORD=${SENTRY_DB_PASSWORD}
+      - POSTGRES_DB=${SENTRY_DB_NAME}
+
+  redis:
+    image: redis:latest
+    container_name: sentry-redis
+    restart: always
+
+  sentry-api:
+    image: sentry:latest
+    container_name: sentry-api
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 9000:9000
+
+  sentry-worker:
+    image: sentry:latest
+    container_name: sentry-worker
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    command: sentry run worker
+
+  sentry-cron:
+    image: sentry:latest
+    container_name: sentry-cron
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    command: sentry run cron
