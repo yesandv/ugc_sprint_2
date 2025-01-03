@@ -1,0 +1,5 @@
+beanie~=1.28.0
+fastapi~=0.111.0
+fastapi-jwt-auth~=0.5.0
+pydantic-settings~=2.5.2
+sentry-sdk[fastapi]~=0.20.3
