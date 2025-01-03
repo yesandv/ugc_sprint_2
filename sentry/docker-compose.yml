@@ -3,9 +3,9 @@ services:
     image: postgres:latest
     container_name: sentry-pg
     environment:
-      - POSTGRES_USER=${SENTRY_DB_USER}
-      - POSTGRES_PASSWORD=${SENTRY_DB_PASSWORD}
-      - POSTGRES_DB=${SENTRY_DB_NAME}
+      POSTGRES_USER: ${SENTRY_DB_USER}
+      POSTGRES_PASSWORD: ${SENTRY_DB_PASSWORD}
+      POSTGRES_DB: ${SENTRY_DB_NAME}
 
   redis:
     image: redis:latest
@@ -17,11 +17,11 @@ services:
     container_name: sentry-api
     env_file:
       - .env
+    ports:
+      - 9000:9000
     depends_on:
       - postgres
       - redis
-    ports:
-      - 9000:9000
 
   sentry-worker:
     image: sentry:latest
