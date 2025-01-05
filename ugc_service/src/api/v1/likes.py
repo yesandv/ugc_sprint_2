@@ -67,18 +67,18 @@ async def get_like_count(
 
 
 @router.get(
-    "/{film_id}/average-score",
+    "/{film_id}/average-rating",
     response_model=float,
     status_code=HTTPStatus.OK,
-    description="Get the average score for a film",
+    description="Get the average rating for a film",
 )
-async def get_average_score(
+async def get_average_rating(
         film_id: UUID,
         like_service: LikeService = Depends(LikeService),
         token: dict = Depends(security_jwt),  # noqa
 ) -> float:
     try:
-        return await like_service.calculate_average_score(film_id)
+        return await like_service.calculate_average_rating(film_id)
     except NotFoundException:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -89,9 +89,9 @@ async def get_average_score(
 @router.patch(
     "",
     status_code=HTTPStatus.OK,
-    description="Update the score of an existing like",
+    description="Update the rating of an existing like",
 )
-async def update_score(
+async def update_rating(
         like_input: LikeInput,
         like_service: LikeService = Depends(LikeService),
         token: dict = Depends(security_jwt),  # noqa

@@ -63,7 +63,7 @@ class ReviewService:
                     "user_id": 1,
                     "film_id": 1,
                     "text": 1,
-                    "score": "$likes.score",
+                    "rating": "$likes.rating",
                 }
             }
         ]

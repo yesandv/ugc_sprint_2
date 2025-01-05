@@ -12,4 +12,4 @@ class ReviewOutput(BaseModel):
     user_id: UUID
     film_id: UUID
     text: str = Field(max_length=5000)
-    score: int | None = None
+    rating: int | None = None

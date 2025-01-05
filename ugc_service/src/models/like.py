@@ -11,7 +11,7 @@ class Like(Document):
     id: UUID = Field(default_factory=uuid4)
     user_id: UUID
     film_id: UUID
-    score: int = Field(ge=0, le=10)
+    rating: int = Field(ge=0, le=10)
     created_at: datetime
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     is_deleted: bool = Field(default=False)

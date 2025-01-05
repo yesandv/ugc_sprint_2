@@ -28,7 +28,7 @@ class LikeService:
         new_like = await self.model(
             user_id=user_id,
             film_id=like_input.film_id,
-            score=like_input.score,
+            rating=like_input.rating,
             created_at=datetime.now(UTC),
         ).insert()  # noqa
         return new_like.id
@@ -47,11 +47,11 @@ class LikeService:
         ).count()
         return count
 
-    async def calculate_average_score(self, film_id) -> float:
+    async def calculate_average_rating(self, film_id) -> float:
         avg = await self.model.find(
             self.model.film_id == film_id,
             self.model.is_deleted == False,  # noqa
-        ).avg(self.model.score)
+        ).avg(self.model.rating)
         if not avg:
             raise NotFoundException
         return avg
@@ -60,7 +60,7 @@ class LikeService:
         like = await self._get_one(user_id, like_input.film_id)
         if not like:
             raise NotFoundException
-        like.score = like_input.score
+        like.rating = like_input.rating
         like.updated_at = datetime.now(UTC)
         await like.save()  # noqa
 
