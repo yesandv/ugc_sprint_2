@@ -9,6 +9,8 @@ services:
     volumes:
       - ./mongo_cluster/data1:/data/db
     command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongors1n2:
     image: mongo:latest
@@ -20,6 +22,8 @@ services:
     volumes:
       - ./mongo_cluster/data2:/data/db
     command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongors1n3:
     image: mongo:latest
@@ -31,6 +35,8 @@ services:
     volumes:
       - ./mongo_cluster/data3:/data/db
     command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongors2n1:
     image: mongo:latest
@@ -42,6 +48,8 @@ services:
     volumes:
       - ./mongo_cluster/data4:/data/db
     command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongors2n2:
     image: mongo:latest
@@ -53,6 +61,8 @@ services:
     volumes:
       - ./mongo_cluster/data5:/data/db
     command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongors2n3:
     image: mongo:latest
@@ -64,6 +74,8 @@ services:
     volumes:
       - ./mongo_cluster/data6:/data/db
     command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongocfg1:
     image: mongo:latest
@@ -73,6 +85,8 @@ services:
     volumes:
       - ./mongo_cluster/config1:/data/db
     command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongocfg2:
     image: mongo:latest
@@ -82,6 +96,8 @@ services:
     volumes:
       - ./mongo_cluster/config2:/data/db
     command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongocfg3:
     image: mongo:latest
@@ -91,6 +107,8 @@ services:
     volumes:
       - ./mongo_cluster/config3:/data/db
     command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port ${MONGO_PORT}
+    networks:
+      - network
 
   mongos1:
     image: mongo:latest
@@ -108,6 +126,8 @@ services:
       --configdb mongors1conf/mongocfg1:${MONGO_PORT},mongocfg2:${MONGO_PORT},mongocfg3:${MONGO_PORT}
       --port ${MONGO_PORT}
       --bind_ip_all
+    networks:
+      - network
 
   mongos2:
     image: mongo:latest
@@ -125,6 +145,8 @@ services:
       --configdb mongors1conf/mongocfg1:${MONGO_PORT},mongocfg2:${MONGO_PORT},mongocfg3:${MONGO_PORT}
       --port ${MONGO_PORT}
       --bind_ip_all
+    networks:
+      - network
 
   mongo-cluster:
     image: mongo:latest
@@ -140,6 +162,8 @@ services:
       - ./mongodb.sh:/docker-entrypoint-initdb.d/mongodb.sh
     entrypoint: sh -c /docker-entrypoint-initdb.d/mongodb.sh
     restart: on-failure
+    networks:
+      - network
 
   fastapi:
     build:
@@ -158,13 +182,30 @@ services:
       uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
       "
     restart: on-failure
+    networks:
+      - network
+      - sentry_default
 
   nginx:
     image: nginx:latest
     container_name: nginx-server
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://127.0.0.1:5044
+        tag: nginx
     depends_on:
       - fastapi
+    networks:
+      - network
+
+networks:
+  network:
+    name: ugc_service_default
+    driver: bridge
+  sentry_default:
+    external: true
