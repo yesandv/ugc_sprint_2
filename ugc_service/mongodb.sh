@@ -12,7 +12,7 @@ wait_for_mongo() {
   echo "Instance at ${host}:${port} is ready"
 }
 
-MONGO_HOSTS="mongocfg1 mongocfg2 mongocfg3 mongors1n1 mongors2n1 mongos1 mongos2"
+MONGO_HOSTS="mongocfg1 mongocfg2 mongocfg3 mongors1n1 mongors2n1"
 
 for host in $MONGO_HOSTS; do
   wait_for_mongo "$host" "$MONGO_PORT"
