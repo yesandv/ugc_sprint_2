@@ -185,6 +185,7 @@ services:
     networks:
       - network
       - sentry_default
+      - elk_default
 
   nginx:
     image: nginx:latest
@@ -208,4 +209,6 @@ networks:
     name: ugc_service_default
     driver: bridge
   sentry_default:
+    external: true
+  elk_default:
     external: true

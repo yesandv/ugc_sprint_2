@@ -1,7 +1,7 @@
 services:
   elasticsearch:
     image: elasticsearch:8.10.2
-    container_name: es-elk
+    container_name: elk-es
     ports:
       - 9200:9200
     environment:

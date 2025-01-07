@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "secret"
     jwt_algorithm: str = ""
     sentry_dsn: str = ""
+    logstash_host: str = "localhost"
+    logstash_port: int = 5044
 
     model_config = SettingsConfigDict(
         env_file=ROOT_DIR / ".env", extra="ignore"
